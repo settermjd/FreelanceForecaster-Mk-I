@@ -13,5 +13,7 @@
     },
     "require-dev": {
         "zendframework/zftool": "dev-master",
+        "mockery/mockery": "dev-master",
+        "phpunit/phpunit": "3.7.*"
     }
 }
