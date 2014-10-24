@@ -1,0 +1,225 @@
+-- MySQL dump 10.13  Distrib 5.5.35, for debian-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: mydb
+-- ------------------------------------------------------
+-- Server version	5.5.35-0+wheezy1-log
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO,POSTGRESQL' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table "articles"
+--
+
+DROP TABLE IF EXISTS "articles";
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE "articles" (
+  "id" int(11) NOT NULL,
+  "name" varchar(100) NOT NULL,
+  "url" varchar(200) DEFAULT NULL,
+  "notes" text COMMENT '	',
+  "project_id" int(11) DEFAULT NULL,
+  "invoice_id" int(11) DEFAULT NULL,
+  "user_id" int(11) DEFAULT NULL,
+  "rate" varchar(45) DEFAULT NULL,
+  "rate_type_id" int(11) DEFAULT NULL,
+  "publish_date" datetime DEFAULT NULL,
+  "accept_date" datetime DEFAULT NULL,
+  "submit_date" datetime DEFAULT NULL,
+  "status_id" int(11) NOT NULL,
+  PRIMARY KEY ("id"),
+  UNIQUE KEY "name_UNIQUE" ("name"),
+  KEY "fk_articles_projects_idx" ("project_id"),
+  KEY "fk_articles_invoices1_idx" ("invoice_id"),
+  KEY "fk_articles_status_idx" ("status_id"),
+  CONSTRAINT "fk_articles_projects" FOREIGN KEY ("project_id") REFERENCES "projects" ("id") ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT "fk_articles_invoices" FOREIGN KEY ("invoice_id") REFERENCES "invoices" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT "fk_articles_status" FOREIGN KEY ("status_id") REFERENCES "status" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table "articles"
+--
+
+LOCK TABLES "articles" WRITE;
+/*!40000 ALTER TABLE "articles" DISABLE KEYS */;
+/*!40000 ALTER TABLE "articles" ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table "clients"
+--
+
+DROP TABLE IF EXISTS "clients";
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE "clients" (
+  "id" int(11) NOT NULL,
+  "first_name" varchar(45) DEFAULT NULL,
+  "last_name" varchar(45) DEFAULT NULL,
+  "import_id" int(11) DEFAULT NULL,
+  "status_id" int(11) NOT NULL,
+  PRIMARY KEY ("id"),
+  KEY "fk_clients_status_idx" ("status_id"),
+  CONSTRAINT "fk_clients_status" FOREIGN KEY ("status_id") REFERENCES "status" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table "clients"
+--
+
+LOCK TABLES "clients" WRITE;
+/*!40000 ALTER TABLE "clients" DISABLE KEYS */;
+/*!40000 ALTER TABLE "clients" ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table "invoices"
+--
+
+DROP TABLE IF EXISTS "invoices";
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE "invoices" (
+  "id" int(11) NOT NULL,
+  "project_id" varchar(45) DEFAULT NULL,
+  "amount" varchar(45) DEFAULT NULL,
+  "date_sent" varchar(45) DEFAULT NULL,
+  "date_paid" varchar(45) DEFAULT NULL,
+  "date_due" varchar(45) DEFAULT NULL,
+  "status_id" int(11) DEFAULT NULL,
+  PRIMARY KEY ("id"),
+  KEY "fk_status_id_idx" ("status_id"),
+  CONSTRAINT "fk_invoice_status" FOREIGN KEY ("status_id") REFERENCES "status" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table "invoices"
+--
+
+LOCK TABLES "invoices" WRITE;
+/*!40000 ALTER TABLE "invoices" DISABLE KEYS */;
+/*!40000 ALTER TABLE "invoices" ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table "projects"
+--
+
+DROP TABLE IF EXISTS "projects";
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE "projects" (
+  "id" int(11) NOT NULL,
+  "name" varchar(45) DEFAULT NULL,
+  "import_id" int(11) DEFAULT NULL,
+  "clients_id" int(11) NOT NULL,
+  "status_id" int(11) NOT NULL,
+  PRIMARY KEY ("id"),
+  KEY "fk_projects_clients1_idx" ("clients_id"),
+  KEY "fk_projects_status_idx" ("status_id")
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table "projects"
+--
+
+LOCK TABLES "projects" WRITE;
+/*!40000 ALTER TABLE "projects" DISABLE KEYS */;
+/*!40000 ALTER TABLE "projects" ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table "status"
+--
+
+DROP TABLE IF EXISTS "status";
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE "status" (
+  "id" int(11) NOT NULL,
+  "name" varchar(15) NOT NULL,
+  PRIMARY KEY ("id"),
+  UNIQUE KEY "name_UNIQUE" ("name")
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table "status"
+--
+
+LOCK TABLES "status" WRITE;
+/*!40000 ALTER TABLE "status" DISABLE KEYS */;
+/*!40000 ALTER TABLE "status" ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table "user_clients"
+--
+
+DROP TABLE IF EXISTS "user_clients";
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE "user_clients" (
+  "user_id" int(11) NOT NULL,
+  "client_id" int(11) NOT NULL,
+  PRIMARY KEY ("user_id","client_id"),
+  KEY "fk_uc_clients_idx" ("client_id"),
+  CONSTRAINT "fk_uc_clients" FOREIGN KEY ("client_id") REFERENCES "clients" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT "fk_uc_users" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table "user_clients"
+--
+
+LOCK TABLES "user_clients" WRITE;
+/*!40000 ALTER TABLE "user_clients" DISABLE KEYS */;
+/*!40000 ALTER TABLE "user_clients" ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table "users"
+--
+
+DROP TABLE IF EXISTS "users";
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE "users" (
+  "id" int(11) NOT NULL,
+  "first_name" varchar(100) DEFAULT NULL,
+  "last_name" varchar(100) DEFAULT NULL,
+  "email_address" varchar(200) DEFAULT NULL,
+  "password" varchar(100) DEFAULT NULL,
+  "status_id" int(11) NOT NULL,
+  PRIMARY KEY ("id"),
+  KEY "fk_users_status_idx" ("status_id"),
+  CONSTRAINT "fk_users_status" FOREIGN KEY ("status_id") REFERENCES "status" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table "users"
+--
+
+LOCK TABLES "users" WRITE;
+/*!40000 ALTER TABLE "users" DISABLE KEYS */;
+/*!40000 ALTER TABLE "users" ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2014-04-02  6:52:01

@@ -1,0 +1,124 @@
+-- Converted by db_converter
+START TRANSACTION;
+SET standard_conforming_strings=off;
+SET escape_string_warning=off;
+SET CONSTRAINTS ALL DEFERRED;
+
+CREATE TABLE "articles" (
+    "id" integer NOT NULL,
+    "name" varchar(200) NOT NULL,
+    "url" varchar(400) DEFAULT NULL,
+    "notes" text,
+    "project_id" integer DEFAULT NULL,
+    "invoice_id" integer DEFAULT NULL,
+    "user_id" integer DEFAULT NULL,
+    "rate" varchar(90) DEFAULT NULL,
+    "rate_type_id" integer DEFAULT NULL,
+    "publish_date" timestamp with time zone DEFAULT NULL,
+    "accept_date" timestamp with time zone DEFAULT NULL,
+    "submit_date" timestamp with time zone DEFAULT NULL,
+    "status_id" integer NOT NULL,
+    PRIMARY KEY ("id"),
+    UNIQUE ("name")
+);
+
+CREATE TABLE "clients" (
+    "id" integer NOT NULL,
+    "first_name" varchar(90) DEFAULT NULL,
+    "last_name" varchar(90) DEFAULT NULL,
+    "import_id" integer DEFAULT NULL,
+    "status_id" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "invoices" (
+    "id" integer NOT NULL,
+    "project_id" varchar(90) DEFAULT NULL,
+    "amount" varchar(90) DEFAULT NULL,
+    "date_sent" varchar(90) DEFAULT NULL,
+    "date_paid" varchar(90) DEFAULT NULL,
+    "date_due" varchar(90) DEFAULT NULL,
+    "status_id" integer DEFAULT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "projects" (
+    "id" integer NOT NULL,
+    "name" varchar(90) DEFAULT NULL,
+    "import_id" integer DEFAULT NULL,
+    "clients_id" integer NOT NULL,
+    "status_id" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "status" (
+    "id" integer NOT NULL,
+    "name" varchar(30) NOT NULL,
+    PRIMARY KEY ("id"),
+    UNIQUE ("name")
+);
+
+CREATE TABLE "user_clients" (
+    "user_id" integer NOT NULL,
+    "client_id" integer NOT NULL,
+    PRIMARY KEY ("user_id","client_id")
+);
+
+CREATE TABLE "users" (
+    "id" integer NOT NULL,
+    "first_name" varchar(200) DEFAULT NULL,
+    "last_name" varchar(200) DEFAULT NULL,
+    "email_address" varchar(400) DEFAULT NULL,
+    "password" varchar(200) DEFAULT NULL,
+    "status_id" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+
+-- Post-data save --
+COMMIT;
+START TRANSACTION;
+
+-- Typecasts --
+
+-- Foreign keys --
+ALTER TABLE "articles" ADD CONSTRAINT "fk_articles_projects" FOREIGN KEY ("project_id") REFERENCES "projects" ("id") ON DELETE SET NULL ON UPDATE SET NULL DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX ON "articles" ("project_id");
+ALTER TABLE "articles" ADD CONSTRAINT "fk_articles_invoices" FOREIGN KEY ("invoice_id") REFERENCES "invoices" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX ON "articles" ("invoice_id");
+ALTER TABLE "articles" ADD CONSTRAINT "fk_articles_status" FOREIGN KEY ("status_id") REFERENCES "status" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX ON "articles" ("status_id");
+ALTER TABLE "clients" ADD CONSTRAINT "fk_clients_status" FOREIGN KEY ("status_id") REFERENCES "status" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX ON "clients" ("status_id");
+ALTER TABLE "invoices" ADD CONSTRAINT "fk_invoice_status" FOREIGN KEY ("status_id") REFERENCES "status" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX ON "invoices" ("status_id");
+ALTER TABLE "user_clients" ADD CONSTRAINT "fk_uc_clients" FOREIGN KEY ("client_id") REFERENCES "clients" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX ON "user_clients" ("client_id");
+ALTER TABLE "user_clients" ADD CONSTRAINT "fk_uc_users" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX ON "user_clients" ("user_id");
+ALTER TABLE "users" ADD CONSTRAINT "fk_users_status" FOREIGN KEY ("status_id") REFERENCES "status" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX ON "users" ("status_id");
+
+-- Sequences --
+CREATE SEQUENCE articles_id_seq;
+SELECT setval('articles_id_seq', max(id)) FROM articles;
+ALTER TABLE "articles" ALTER COLUMN "id" SET DEFAULT nextval('articles_id_seq');
+CREATE SEQUENCE clients_id_seq;
+SELECT setval('clients_id_seq', max(id)) FROM clients;
+ALTER TABLE "clients" ALTER COLUMN "id" SET DEFAULT nextval('clients_id_seq');
+CREATE SEQUENCE invoices_id_seq;
+SELECT setval('invoices_id_seq', max(id)) FROM invoices;
+ALTER TABLE "invoices" ALTER COLUMN "id" SET DEFAULT nextval('invoices_id_seq');
+CREATE SEQUENCE projects_id_seq;
+SELECT setval('projects_id_seq', max(id)) FROM projects;
+ALTER TABLE "projects" ALTER COLUMN "id" SET DEFAULT nextval('projects_id_seq');
+CREATE SEQUENCE status_id_seq;
+SELECT setval('status_id_seq', max(id)) FROM status;
+ALTER TABLE "status" ALTER COLUMN "id" SET DEFAULT nextval('status_id_seq');
+CREATE SEQUENCE users_id_seq;
+SELECT setval('users_id_seq', max(id)) FROM users;
+ALTER TABLE "users" ALTER COLUMN "id" SET DEFAULT nextval('users_id_seq');
+
+-- Full Text keys --
+
+COMMIT;
